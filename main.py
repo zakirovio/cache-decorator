@@ -8,6 +8,7 @@ class Point:
         self.y = y
 
 def cast_to_hashable(item: Any) -> Any:
+    """Метод кастит аргументы в типы которые могут быть хешированы"""
     if isinstance(item, list):
         return tuple(i for i in item)
     elif isinstance(item, set):
@@ -15,10 +16,11 @@ def cast_to_hashable(item: Any) -> Any:
     elif isinstance(item, dict):
         return tuple((k, cast_to_hashable(v)) for k, v in item.items())
     else:
-        return item
+        return item # Пользовательский класс по умолчанию хешируемый
 
 def cache(func):
     def wrapper(*args, **kwargs):
+        # Аргументы могут передаваться позиционно или по ключам
         hashable_args = tuple(cast_to_hashable(arg) for arg in args)
         hashable_kwargs = tuple((k, cast_to_hashable(v)) for k, v in kwargs.items())
         
@@ -54,6 +56,7 @@ def main():
     for i in range(101):
         foo(1, i)
 
+    print(f"[DEBUG]: Check cache worker...")
     for _ in range(2):
         result = foo(1, 2)
         print(f"[INFO]: {result}")
